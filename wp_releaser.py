@@ -1,3 +1,4 @@
+#!/usr/bin/python
 
 import sys, getopt, string
 
@@ -10,12 +11,32 @@ NEW_URL = None
 COMMENTING = False
 URI_DIFF = None
 
+start_msg = """\
+====================
+ Wordpress Releaser
+====================
+
+Author Erik Nijenhuis
+License GNU LGPLv3
+"""
+
+help_msg = """\
+Usage:  (-s <filename> | --script=<filename>)
+        (-n <new_url> | --new-url=<new_url>)
+        (-o <old_url> | --old-url=<old_url>)
+        (--output=<output_filename>)
+"""
+
+
 
 def parse_args():
     global SQL_IMPORT_SCRIPT, OLD_URL, NEW_URL, URI_DIFF, SQL_OUTPUT_LOCATION
-    opts, args = getopt.getopt(sys.argv[1:], 's:n:o:', ['script', 'new-url', 'old-url', 'output'])
+    opts, args = getopt.getopt(sys.argv[1:], 'hs:n:o:', ['help', 'script=', 'new-url=', 'old-url=', 'output='])
     for opt, arg in opts:
-        if opt in ['-s', '--script']:
+        if opt in ['-h', '--help']:
+            print help_msg
+            exit(0)
+        elif opt in ['-s', '--script']:
             SQL_IMPORT_SCRIPT = open(arg).readlines()
         elif opt in ['-n', '--new-url']:
             NEW_URL = arg
@@ -23,9 +44,9 @@ def parse_args():
             OLD_URL = arg
         elif opt == '--output':
             SQL_OUTPUT_LOCATION = arg
-    SQL_IMPORT_SCRIPT = SQL_IMPORT_SCRIPT or file(input("Enter sql file location: "))
-    OLD_URL = OLD_URL or input("Enter old url: ")
-    NEW_URL = NEW_URL or input("Enter new url: ")
+    SQL_IMPORT_SCRIPT = SQL_IMPORT_SCRIPT or open(raw_input("Enter sql file location: ")).readlines()
+    OLD_URL = OLD_URL or raw_input("Enter old url: ")
+    NEW_URL = NEW_URL or raw_input("Enter new url: ")
     URI_DIFF = len(NEW_URL) - len(OLD_URL)
 
 
@@ -86,8 +107,12 @@ def parse_script():
 
 
 def main():
-    parse_args()
-    parse_script()
+    print start_msg
+    try:
+        parse_args()
+        parse_script()
+    except (KeyboardInterrupt, EOFError):
+        print "\nClosing..."
     f = open(SQL_OUTPUT_LOCATION, 'w')
     f.write(SQL_PARSED_SCRIPT)
 
