@@ -1,4 +1,4 @@
-# WP-Releaser
+# WP-Url-Helper
 Python helper script for refactoring wordpress database url's
 
 # Installation
