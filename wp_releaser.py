@@ -79,9 +79,12 @@ def parse_line(count, value):
                         while chunk[n_i] is not ':':
                             tmp_n = chunk[n_i] + tmp_n
                             n_i -= 1
-                        n_length = str(int(tmp_n) + URI_DIFF)
-                        chunk = chunk[:n_i] + string.replace(chunk[n_i:], tmp_n, n_length, 1)
-                        chunk = string.replace(chunk, OLD_URL, NEW_URL, 1)
+                        try:
+			    n_length = str(int(tmp_n) + URI_DIFF)
+                            chunk = chunk[:n_i] + string.replace(chunk[n_i:], tmp_n, n_length, 1)
+                            chunk = string.replace(chunk, OLD_URL, NEW_URL, 1)
+			except:
+			    chunk = string.replace(chunk, OLD_URL, NEW_URL, 1)
                     count -= 1
                     chunk_i = chunk.find(OLD_URL, chunk_i + 1)
                 if len(stack) > 0:
